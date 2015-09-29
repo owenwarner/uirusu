@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2015 Arxopia LLC.
+# Copyright (c) 2012-2013 Arxopia LLC.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,23 +27,39 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 module Uirusu
-	APP_NAME = "uirusu"
-	VERSION = "0.0.7"
-	CONFIG_FILE = Dir.home + "/.uirusu"
-	VT_API = "https://www.virustotal.com/vtapi/v2"
-	RESULT_FIELDS = [ :hash, :scanner, :version, :detected, :result, :md5, :sha1, :sha256, :update, :permalink]
+	#
+	#
+	module VTIP
+		REPORT_URL = Uirusu::VT_API + "/ip-address/report"
+
+		# Searches reports by IP from Virustotal.com
+		#
+		# @param api_key Virustotal.com API key
+		# @param resource url to search
+		#
+		# @return [JSON] Parsed response
+		def self.query_report(api_key, resource)
+			if api_key == nil
+				raise "Invalid API Key"
+			end
+
+			if resource == nil
+				raise "Invalid resource, must be a valid IP"
+			end
+
+			response = RestClient.post REPORT_URL, :apikey => api_key, :resource => resource
+
+			case response.code
+				when 429, 204
+					raise "Virustotal limit reached. Try again later."
+				when 403
+					raise "Invalid privileges, please check your API key."
+				when 200
+					JSON.parse(response)
+				else
+					raise "Unknown Server error."
+			end
+		end
+	end
 end
 
-require 'json'
-require 'rest_client'
-require 'optparse'
-require 'yaml'
-
-require 'uirusu/vtfile'
-require 'uirusu/vturl'
-require 'uirusu/vtip'
-require 'uirusu/vtdomain'
-require 'uirusu/vtcomment'
-require 'uirusu/vtresult'
-require 'uirusu/scanner'
-require 'uirusu/cli/application'
