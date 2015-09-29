@@ -51,12 +51,12 @@ module Uirusu
       response = Net::HTTP.get_response(URI.parse(url)) 
 
 			case response.code
-				when 429, 204
+				when "429", "204"
 					raise "Virustotal limit reached. Try again later."
-				when 403
+				when "403"
 					raise "Invalid privileges, please check your API key."
-				when 200
-					JSON.parse(response)
+				when "200"
+					JSON.parse(response.body)
 				else
 					raise "Unknown Server error."
 			end

@@ -50,17 +50,17 @@ module Uirusu
 				raise "Invalid resource, must be a valid IP"
 			end
 
-      url = REPORT_URL + "ip=#{URI.encode(ip)}&apikey=#{api_key}"
+      url = REPORT_URL + "ip=#{ip}&apikey=#{api_key}"
       response = Net::HTTP.get_response(URI.parse(url))
 
       begin
         case response.code
-          when 429, 204
+          when "429", "204"
             raise "Virustotal limit reached. Try again later."
-          when 403
+          when "403"
             raise "Invalid privileges, please check your API key."
-          when 200
-            JSON.parse(response)
+          when "200"
+            JSON.parse(response.body)
           else
             raise "Unknown Server error."
         end
