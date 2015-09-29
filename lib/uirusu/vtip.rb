@@ -43,22 +43,26 @@ module Uirusu
 				raise "Invalid API Key"
 			end
 
-			if resource == nil
+			if ip == nil
 				raise "Invalid resource, must be a valid IP"
 			end
 
 			response = RestClient.post REPORT_URL, :apikey => api_key, :ip => ip
 
-			case response.code
-				when 429, 204
-					raise "Virustotal limit reached. Try again later."
-				when 403
-					raise "Invalid privileges, please check your API key."
-				when 200
-					JSON.parse(response)
-				else
-					raise "Unknown Server error."
-			end
+      begin
+        case response.code
+          when 429, 204
+            raise "Virustotal limit reached. Try again later."
+          when 403
+            raise "Invalid privileges, please check your API key."
+          when 200
+            JSON.parse(response)
+          else
+            raise "Unknown Server error."
+        end
+      rescue RestClient::Exception => e
+        raise "Error: #{e}"
+      end
 		end
 	end
 end

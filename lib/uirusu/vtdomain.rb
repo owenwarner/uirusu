@@ -43,7 +43,7 @@ module Uirusu
 				raise "Invalid API Key"
 			end
 
-			if resource == nil
+			if domain == nil
 				raise "Invalid resource, must be a valid Domain"
 			end
 
