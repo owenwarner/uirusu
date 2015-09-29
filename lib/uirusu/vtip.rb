@@ -26,11 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+require 'net/http'
+require 'uri'
+
 module Uirusu
 	#
 	#
 	module VTIP
-		REPORT_URL = Uirusu::VT_API + "/ip-address/report"
+		REPORT_URL = Uirusu::VT_API + "/ip-address/report?"
 
 		# Searches reports by IP from Virustotal.com
 		#
@@ -47,7 +50,8 @@ module Uirusu
 				raise "Invalid resource, must be a valid IP"
 			end
 
-			response = RestClient.post REPORT_URL, :apikey => api_key, :ip => ip
+      url = REPORT_URL + "ip=#{URI.encode(ip)}&apikey=#{api_key}"
+      response = Net::HTTP.get_response(URI.parse(url))
 
       begin
         case response.code

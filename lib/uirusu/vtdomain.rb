@@ -30,7 +30,7 @@ module Uirusu
 	#
 	#
 	module VTDomain
-		REPORT_URL = Uirusu::VT_API + "/domain/report"
+		REPORT_URL = Uirusu::VT_API + "/domain/report?"
 
 		# Searches reports by Domain from Virustotal.com
 		#
@@ -47,7 +47,8 @@ module Uirusu
 				raise "Invalid resource, must be a valid Domain"
 			end
 
-			response = RestClient.post REPORT_URL, :apikey => api_key, :domain => domain
+      url = REPORT_URL + "domain=#{URI.encode(domain)}&apikey=#{api_key}"
+      response = Net::HTTP.get_response(URI.parse(url)) 
 
 			case response.code
 				when 429, 204
