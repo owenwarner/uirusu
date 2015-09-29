@@ -38,7 +38,7 @@ module Uirusu
 		# @param resource url to search
 		#
 		# @return [JSON] Parsed response
-		def self.query_report(api_key, resource)
+		def self.query_report(api_key, ip)
 			if api_key == nil
 				raise "Invalid API Key"
 			end
@@ -47,7 +47,7 @@ module Uirusu
 				raise "Invalid resource, must be a valid IP"
 			end
 
-			response = RestClient.post REPORT_URL, :apikey => api_key, :resource => resource
+			response = RestClient.post REPORT_URL, :apikey => api_key, :ip => ip
 
 			case response.code
 				when 429, 204
